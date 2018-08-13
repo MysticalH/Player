@@ -1,0 +1,96 @@
+﻿<Window x:Class="SimplePlayer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimplePlayer"
+        xmlns:media="clr-namespace:SimplePlayer.Model"
+        xmlns:collection="clr-namespace:SimplePlayer.Repository"
+        
+        mc:Ignorable="d"
+        Title="SimplePlayer" Height="435.5" Width="666">
+    <Window.Resources>
+        <media:MediaFile x:Key="playFile"></media:MediaFile>
+        <collection:PlayList x:Key="playCollection"></collection:PlayList>
+        
+    </Window.Resources>
+
+    
+    <DockPanel x:Name="dpMainPanel" DataContext="{Binding Source={StaticResource playCollection}}" Background="Black">
+        <Menu x:Name="miMainMenu" DockPanel.Dock="Top" MouseLeave="Menu_OnMouseLeave" MouseEnter="Menu_OnMouseEnter">
+            <MenuItem Header="File">
+                <MenuItem x:Name="miOpenFile" Header="Open file" Click="MiOpenFile_OnClick"></MenuItem>                               
+            </MenuItem>            
+            <Expander >
+                <CheckBox x:Name="cbAutoPlay">Auto play</CheckBox>
+            </Expander>
+        </Menu>
+        <Grid x:Name="GridPlayerControlls" DockPanel.Dock="Bottom" Background="Black" MouseLeave="UIElement_OnMouseLeave" MouseEnter="Grid_OnMouseEnter">
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            
+            <Slider x:Name="sPosition" Grid.Row="0" Grid.ColumnSpan="5" Minimum="0" 
+                    
+                    PreviewMouseLeftButtonDown="sPosition_PreviewMouseLeftButtonDown" PreviewMouseLeftButtonUp="sPosition_PreviewMouseLeftButtonUp"
+                     ></Slider>
+            <DockPanel Grid.Row="1" Grid.ColumnSpan="5">
+                <Label x:Name="lbTimeInfo" DockPanel.Dock="Left" HorizontalAlignment="Center" Foreground="Aqua">00:00:00</Label>
+                <Button x:Name="btnPrevios" DockPanel.Dock="Left" Foreground="Aqua"
+                         MinWidth="50"
+                        MaxWidth="150" 
+                        Click="btnPrevios_Click">
+                   
+                    <Path Fill="Aqua" Data="{StaticResource navigate_previousStyle0}" Stretch="Uniform" Height="20"></Path>
+                </Button>
+                <Button x:Name="btnPlay" DockPanel.Dock="Left" Click="BtnPlay_OnClick"
+                         MinWidth="50"
+                        MaxWidth="150">
+                    <Path x:Name="btnPlayPath" Fill="Aqua" Data="{StaticResource PlayStyle0}" Stretch="Uniform" Height="20"></Path>
+                </Button>
+                <Button x:Name="btnNext" DockPanel.Dock="Left"
+                        MinWidth="50"
+                        MaxWidth="150" 
+                        Click="btnNext_Click">
+                    <Path Fill="Aqua" Data="{StaticResource navigate_nextStyle0}" Stretch="Uniform" Height="20" ></Path>
+                </Button>
+                
+                    <Button x:Name="btnFullScreen" DockPanel.Dock="Right" MinWidth="50" Click="btnFullScreen_Click">
+                        <Path Fill="Aqua" Data="{StaticResource fullscreen_boxStyle0}" Stretch="Uniform" Height="20"></Path>
+                    </Button>
+                    <Slider x:Name="sVolume" DockPanel.Dock="Right" HorizontalAlignment="Right" 
+                            Minimum="0"
+                            Value="0.4"
+                            Maximum="1"
+                            Margin="5"  MinWidth="100" MaxWidth="100"></Slider>
+                
+            </DockPanel>
+           
+
+        </Grid>
+        <Grid x:Name="dpListZone" DockPanel.Dock="Right" Background="Black">
+            <Grid.RowDefinitions>
+                <RowDefinition Height=".9*"></RowDefinition>
+                <RowDefinition Height=".1*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="lbPlayList" Grid.Row="0" VerticalAlignment="Stretch" Height="{Binding ElementName=dpListZone, Path=ActualHeight}" ItemsSource="{Binding Source={StaticResource playCollection}, Path=FilesCollection}"
+                 IsSynchronizedWithCurrentItem="True" SelectionChanged="lbPlayList_SelectionChanged" 
+                     PreviewDragEnter="lbPlayList_Drop" PreviewDragOver="lbPlayList_Drop" PreviewDrop="lbPlayList_PreviewDrop" AllowDrop="True" 
+                   MinWidth="100" MaxWidth="200" MinHeight="300">
+
+            </ListBox>
+            <Button x:Name="btnRemoveFromList" Grid.Row="1" MaxHeight="30" Click="btnRemoveFromList_Click"> Remove</Button>
+        </Grid>
+        <Border Background="Black"></Border>
+        <MediaElement x:Name="mePlayer" DockPanel.Dock="Left" 
+                      MouseDown="mePlayer_MouseDown"                                 
+                      Stretch="Fill" Source="{Binding Source={StaticResource playFile},Path=PlayFile}" 
+                      Volume="{Binding ElementName=sVolume, Path=Value, Mode=TwoWay}"  LoadedBehavior="Manual" 
+                      MediaOpened="mePlayer_MediaOpened"
+                      MediaEnded="mePlayer_MediaEnded"
+                      MediaFailed="mePlayer_MediaFailed"></MediaElement>
+
+        <!--<DockPanel DockPanel.Dock="Bottom" MaxHeight="150"></DockPanel>-->
+    </DockPanel>
+</Window>
